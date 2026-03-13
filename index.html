@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Celeiro Gourmet</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Crimson+Pro:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5EFE0;
+    --cream-dark: #EDE3CB;
+    --brown: #5C3D1E;
+    --brown-light: #8B6340;
+    --brown-dark: #3A2510;
+    --gold: #C9912A;
+    --gold-light: #E8B84B;
+    --green: #3A5A40;
+    --text: #2C1A0E;
+    --text-muted: #7A5C3A;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--cream); color: var(--text); font-family: 'Crimson Pro', serif; font-size: 17px; line-height: 1.6; }
+
+  /* NAVIGATION */
+  nav {
+    background: var(--brown-dark);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+    border-bottom: 2px solid var(--gold);
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; color: var(--cream);
+    padding: 1rem 0;
+    letter-spacing: 0.02em;
+  }
+  .logo span { color: var(--gold-light); font-style: italic; }
+  .nav-links { display: flex; gap: 0; }
+  .nav-links button {
+    background: none; border: none; color: var(--cream-dark);
+    font-family: 'Crimson Pro', serif; font-size: 1rem;
+    padding: 1.2rem 1.2rem; cursor: pointer; letter-spacing: 0.05em;
+    text-transform: uppercase; font-size: 0.85rem; transition: color 0.2s;
+  }
+  .nav-links button:hover, .nav-links button.active { color: var(--gold-light); }
+  .cart-btn {
+    background: var(--gold) !important; color: var(--brown-dark) !important;
+    border-radius: 4px; padding: 0.6rem 1.2rem !important;
+    font-weight: 500; display: flex; align-items: center; gap: 6px;
+  }
+  .cart-btn:hover { background: var(--gold-light) !important; }
+  .cart-count {
+    background: var(--brown-dark); color: var(--gold-light);
+    border-radius: 50%; width: 20px; height: 20px;
+    font-size: 0.75rem; display: flex; align-items: center; justify-content: center;
+    font-weight: 600;
+  }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* HERO */
+  .hero {
+    min-height: 88vh;
+    background: var(--brown-dark);
+    display: flex; align-items: center;
+    position: relative; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 70% 50%, rgba(201,145,42,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse at 20% 80%, rgba(58,90,64,0.2) 0%, transparent 50%);
+  }
+  .hero-texture {
+    position: absolute; inset: 0; opacity: 0.04;
+    background-image: repeating-linear-gradient(
+      45deg, #fff 0, #fff 1px, transparent 0, transparent 50%
+    );
+    background-size: 8px 8px;
+  }
+  .hero-content {
+    position: relative; z-index: 1;
+    max-width: 700px; padding: 4rem 4rem;
+  }
+  .hero-badge {
+    display: inline-block;
+    border: 1px solid var(--gold); color: var(--gold);
+    font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 4px 14px; border-radius: 2px; margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    color: var(--cream); line-height: 1.15; margin-bottom: 1.5rem;
+  }
+  .hero h1 em { color: var(--gold-light); font-style: italic; }
+  .hero p { color: #C4B49A; font-size: 1.15rem; max-width: 480px; margin-bottom: 2.5rem; }
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--gold); color: var(--brown-dark);
+    border: none; padding: 0.9rem 2rem; font-family: 'Crimson Pro', serif;
+    font-size: 1rem; font-weight: 500; cursor: pointer; border-radius: 3px;
+    letter-spacing: 0.03em; transition: background 0.2s;
+  }
+  .btn-primary:hover { background: var(--gold-light); }
+  .btn-secondary {
+    background: transparent; color: var(--cream);
+    border: 1px solid rgba(255,255,255,0.3); padding: 0.9rem 2rem;
+    font-family: 'Crimson Pro', serif; font-size: 1rem; cursor: pointer;
+    border-radius: 3px; letter-spacing: 0.03em; transition: border-color 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold-light); }
+  .hero-divider {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 60px;
+    background: var(--cream);
+    clip-path: polygon(0 100%, 100% 100%, 100% 30%, 0 100%);
+  }
+
+  /* CATEGORIES */
+  .categories {
+    padding: 4rem 2rem 2rem;
+    max-width: 1100px; margin: 0 auto;
+  }
+  .section-label {
+    font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.5rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; color: var(--brown-dark); margin-bottom: 2.5rem;
+  }
+  .cat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+  .cat-card {
+    background: var(--brown-dark); border-radius: 6px; padding: 2rem 1.5rem;
+    cursor: pointer; transition: transform 0.2s; text-align: center;
+    border-bottom: 3px solid var(--gold);
+  }
+  .cat-card:hover { transform: translateY(-3px); }
+  .cat-icon { font-size: 2.5rem; margin-bottom: 0.75rem; display: block; }
+  .cat-card h3 { font-family: 'Playfair Display', serif; color: var(--cream); font-size: 1.1rem; }
+  .cat-card p { color: #9A8570; font-size: 0.9rem; margin-top: 4px; }
+
+  /* PRODUCTS PAGE */
+  .products-page { padding: 3rem 2rem; max-width: 1100px; margin: 0 auto; }
+  .filter-bar {
+    display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 2rem; align-items: center;
+  }
+  .filter-btn {
+    background: none; border: 1px solid var(--cream-dark);
+    color: var(--text-muted); padding: 0.4rem 1.2rem;
+    border-radius: 20px; cursor: pointer; font-family: 'Crimson Pro', serif;
+    font-size: 0.9rem; transition: all 0.2s;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--brown-dark); color: var(--gold-light); border-color: var(--brown-dark);
+  }
+  .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; }
+  .product-card {
+    background: white; border-radius: 6px; overflow: hidden;
+    border: 1px solid var(--cream-dark); transition: box-shadow 0.2s;
+  }
+  .product-card:hover { box-shadow: 0 8px 24px rgba(58,37,16,0.12); }
+  .product-img {
+    height: 180px; display: flex; align-items: center; justify-content: center;
+    font-size: 4rem; background: var(--cream);
+  }
+  .product-info { padding: 1rem 1.2rem 1.2rem; }
+  .product-cat {
+    font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 4px;
+  }
+  .product-name {
+    font-family: 'Playfair Display', serif; font-size: 1.05rem;
+    color: var(--brown-dark); margin-bottom: 6px;
+  }
+  .product-desc { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.5; }
+  .product-footer { display: flex; align-items: center; justify-content: space-between; }
+  .product-price { font-size: 1.2rem; font-weight: 500; color: var(--brown); }
+  .add-to-cart {
+    background: var(--brown-dark); color: var(--gold-light);
+    border: none; padding: 0.5rem 1rem; border-radius: 3px;
+    cursor: pointer; font-size: 0.85rem; font-family: 'Crimson Pro', serif;
+    transition: background 0.2s;
+  }
+  .add-to-cart:hover { background: var(--brown); }
+
+  /* CART */
+  .cart-page { padding: 3rem 2rem; max-width: 800px; margin: 0 auto; }
+  .cart-empty { text-align: center; padding: 4rem 2rem; color: var(--text-muted); }
+  .cart-empty .big-icon { font-size: 4rem; margin-bottom: 1rem; }
+  .cart-item {
+    background: white; border-radius: 6px; border: 1px solid var(--cream-dark);
+    padding: 1rem 1.2rem; margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .cart-item-icon { font-size: 2rem; min-width: 48px; text-align: center; }
+  .cart-item-info { flex: 1; }
+  .cart-item-name { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--brown-dark); }
+  .cart-item-price { font-size: 0.9rem; color: var(--text-muted); }
+  .qty-controls { display: flex; align-items: center; gap: 8px; }
+  .qty-btn {
+    width: 28px; height: 28px; border: 1px solid var(--cream-dark);
+    background: none; border-radius: 3px; cursor: pointer; font-size: 1rem;
+    color: var(--brown); display: flex; align-items: center; justify-content: center;
+  }
+  .qty-btn:hover { background: var(--cream-dark); }
+  .remove-btn {
+    background: none; border: none; color: #C0392B; cursor: pointer;
+    font-size: 1.1rem; padding: 4px;
+  }
+  .cart-summary {
+    background: var(--brown-dark); color: var(--cream);
+    border-radius: 6px; padding: 1.5rem; margin-top: 1.5rem;
+  }
+  .summary-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+  .summary-total { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--gold-light); border-top: 1px solid rgba(255,255,255,0.15); padding-top: 0.75rem; margin-top: 0.75rem; }
+  .checkout-btn {
+    width: 100%; background: var(--gold); color: var(--brown-dark);
+    border: none; padding: 1rem; font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; cursor: pointer; border-radius: 3px; margin-top: 1rem;
+    transition: background 0.2s;
+  }
+  .checkout-btn:hover { background: var(--gold-light); }
+
+  /* ADMIN */
+  .admin-page { padding: 3rem 2rem; max-width: 900px; margin: 0 auto; }
+  .admin-header {
+    background: var(--brown-dark); color: var(--cream);
+    padding: 1.5rem 2rem; border-radius: 6px; margin-bottom: 2rem;
+    border-left: 4px solid var(--gold);
+  }
+  .admin-header h2 { font-family: 'Playfair Display', serif; color: var(--gold-light); }
+  .admin-header p { color: #9A8570; font-size: 0.9rem; margin-top: 4px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+  label { font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+  input, select, textarea {
+    border: 1px solid var(--cream-dark); background: white;
+    padding: 0.7rem 0.9rem; border-radius: 4px;
+    font-family: 'Crimson Pro', serif; font-size: 1rem; color: var(--text);
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none; border-color: var(--gold);
+  }
+  textarea { resize: vertical; min-height: 80px; }
+  .submit-btn {
+    background: var(--green); color: white; border: none;
+    padding: 0.9rem 2rem; font-family: 'Crimson Pro', serif;
+    font-size: 1rem; cursor: pointer; border-radius: 4px; margin-top: 1rem;
+    transition: opacity 0.2s;
+  }
+  .submit-btn:hover { opacity: 0.9; }
+  .success-msg {
+    background: #EAF5EA; border: 1px solid #A3D9A3; color: #2D6A2D;
+    padding: 0.75rem 1rem; border-radius: 4px; margin-top: 1rem;
+    display: none; font-size: 0.95rem;
+  }
+  .admin-list { margin-top: 2.5rem; }
+  .admin-product-row {
+    display: flex; align-items: center; gap: 1rem;
+    background: white; border: 1px solid var(--cream-dark);
+    border-radius: 6px; padding: 0.9rem 1.2rem; margin-bottom: 0.6rem;
+  }
+  .admin-icon { font-size: 1.5rem; min-width: 36px; }
+  .admin-info { flex: 1; }
+  .admin-name { font-family: 'Playfair Display', serif; font-size: 0.95rem; color: var(--brown-dark); }
+  .admin-cat { font-size: 0.8rem; color: var(--text-muted); }
+  .admin-price { font-weight: 500; color: var(--brown); min-width: 80px; text-align: right; }
+  .del-btn {
+    background: none; border: 1px solid #e0b0b0; color: #C0392B;
+    padding: 4px 10px; border-radius: 3px; cursor: pointer; font-size: 0.8rem;
+  }
+  .del-btn:hover { background: #fdf0f0; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem;
+    background: var(--green); color: white;
+    padding: 0.8rem 1.5rem; border-radius: 4px;
+    font-size: 0.95rem; opacity: 0; pointer-events: none;
+    transition: opacity 0.3s; z-index: 999;
+  }
+  .toast.show { opacity: 1; }
+
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; color: var(--brown-dark); margin-bottom: 2rem;
+  }
+
+  @media (max-width: 600px) {
+    .hero-content { padding: 3rem 1.5rem; }
+    .form-grid { grid-template-columns: 1fr; }
+    .nav-links button { padding: 1rem 0.7rem; font-size: 0.75rem; }
+    .logo { font-size: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Celeiro <span>Gourmet</span></div>
+  <div class="nav-links">
+    <button onclick="showPage('home')" class="active" id="nav-home">Início</button>
+    <button onclick="showPage('products')" id="nav-products">Produtos</button>
+    <button onclick="goAdmin()" id="nav-admin">⚙</button>
+    <button class="cart-btn" onclick="showPage('cart')">
+      🛒 Carrinho <span class="cart-count" id="cart-count">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-texture"></div>
+    <div class="hero-content">
+      <div class="hero-badge">Artesanal · Selecionado · Autêntico</div>
+      <h1>O melhor do campo<br>na sua <em>mesa</em></h1>
+      <p>Queijos artesanais e cachaças premium selecionados com cuidado de produtores que amam o que fazem.</p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="showPage('products')">Ver produtos</button>
+        <button class="btn-secondary" onclick="goAdmin()">Adicionar produto</button>
+      </div>
+    </div>
+    <div class="hero-divider"></div>
+  </div>
+
+  <div class="categories">
+    <div class="section-label">Nossas categorias</div>
+    <h2 class="section-title">O que você vai encontrar</h2>
+    <div class="cat-grid">
+      <div class="cat-card" onclick="filterAndShow('queijo')">
+        <span class="cat-icon">🧀</span>
+        <h3>Queijos Artesanais</h3>
+        <p>Minas, Serra, Brie e muito mais</p>
+      </div>
+      <div class="cat-card" onclick="filterAndShow('cachaca')">
+        <span class="cat-icon">🥃</span>
+        <h3>Cachaças Gourmet</h3>
+        <p>Envelhecidas, premium e especiais</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<div class="page" id="page-products">
+  <div class="products-page">
+    <h1 class="page-title">Nossos Produtos</h1>
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="setFilter('todos', this)">Todos</button>
+      <button class="filter-btn" onclick="setFilter('queijo', this)">🧀 Queijos</button>
+      <button class="filter-btn" onclick="setFilter('cachaca', this)">🥃 Cachaças</button>
+    </div>
+    <div class="products-grid" id="products-grid"></div>
+  </div>
+</div>
+
+<!-- CART -->
+<div class="page" id="page-cart">
+  <div class="cart-page">
+    <h1 class="page-title">Seu Carrinho</h1>
+    <div id="cart-content"></div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="page" id="page-login">
+  <div style="min-height:80vh; display:flex; align-items:center; justify-content:center;">
+    <div style="background:white; border:1px solid var(--cream-dark); border-radius:10px; padding:2.5rem 2rem; max-width:360px; width:100%; text-align:center;">
+      <div style="font-size:2.5rem; margin-bottom:0.75rem;">🔒</div>
+      <h2 style="font-family:'Playfair Display',serif; color:var(--brown-dark); margin-bottom:0.5rem;">Área Restrita</h2>
+      <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:1.5rem;">Digite a senha para acessar o painel de administração.</p>
+      <input type="password" id="login-input" placeholder="Senha..." style="width:100%; margin-bottom:0.75rem; text-align:center; letter-spacing:0.15em;" onkeydown="if(event.key==='Enter') doLogin()">
+      <div id="login-error" style="color:#C0392B; font-size:0.85rem; margin-bottom:0.75rem; display:none;">Senha incorreta. Tente novamente.</div>
+      <button onclick="doLogin()" style="width:100%; background:var(--brown-dark); color:var(--gold-light); border:none; padding:0.85rem; border-radius:4px; font-family:'Crimson Pro',serif; font-size:1rem; cursor:pointer;">Entrar</button>
+      <button onclick="showPage('home')" style="width:100%; background:none; border:none; color:var(--text-muted); font-family:'Crimson Pro',serif; font-size:0.9rem; cursor:pointer; margin-top:0.75rem;">← Voltar ao site</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="page" id="page-admin">
+  <div class="admin-page">
+    <div class="admin-header">
+      <h2>Painel de Administração</h2>
+      <p>Adicione e gerencie seus produtos aqui. Só você vê esta página.</p>
+    </div>
+
+    <div class="section-label" style="margin-bottom:1rem;">Adicionar novo produto</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Nome do produto</label>
+        <input type="text" id="f-name" placeholder="Ex: Queijo Canastra Curado">
+      </div>
+      <div class="form-group">
+        <label>Categoria</label>
+        <select id="f-cat">
+          <option value="queijo">🧀 Queijo</option>
+          <option value="cachaca">🥃 Cachaça</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Preço (R$)</label>
+        <input type="number" id="f-price" placeholder="89.90" step="0.01" min="0">
+      </div>
+      <div class="form-group">
+        <label>Emoji do produto</label>
+        <input type="text" id="f-emoji" placeholder="🧀" maxlength="4">
+      </div>
+      <div class="form-group full">
+        <label>Descrição</label>
+        <textarea id="f-desc" placeholder="Descreva a origem, sabor e características do produto..."></textarea>
+      </div>
+    </div>
+    <button class="submit-btn" onclick="addProduct()">+ Adicionar produto ao catálogo</button>
+    <div class="success-msg" id="success-msg">✅ Produto adicionado com sucesso!</div>
+
+    <div class="admin-list">
+      <div class="section-label" style="margin-bottom:1rem;">Produtos cadastrados</div>
+      <div id="admin-list"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const ADMIN_PASSWORD = "celeiro2024";
+let isLoggedIn = false;
+
+function goAdmin() {
+  if (isLoggedIn) { showPage('admin'); }
+  else { showPage('login'); document.getElementById('login-input').focus(); }
+}
+
+function doLogin() {
+  const val = document.getElementById('login-input').value;
+  if (val === ADMIN_PASSWORD) {
+    isLoggedIn = true;
+    document.getElementById('login-input').value = '';
+    document.getElementById('login-error').style.display = 'none';
+    showPage('admin');
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+    document.getElementById('login-input').value = '';
+    document.getElementById('login-input').focus();
+  }
+}
+
+
+let products = [
+  { id: 1, name: "Queijo Canastra Curado", cat: "queijo", price: 89.90, emoji: "🧀", desc: "Produzido na Serra da Canastra, curado por 60 dias. Sabor intenso e textura firme." },
+  { id: 2, name: "Queijo Brie Artesanal", cat: "queijo", price: 64.50, emoji: "🧀", desc: "Casca florida, interior cremoso. Produzido em pequena escala no Sul de Minas." },
+  { id: 3, name: "Cachaça Envelhecida Carvalho", cat: "cachaca", price: 149.00, emoji: "🥃", desc: "Envelhecida 3 anos em barril de carvalho europeu. Notas de baunilha e caramelo." },
+  { id: 4, name: "Cachaça Dupla Destilada", cat: "cachaca", price: 89.00, emoji: "🥃", desc: "Destilada duas vezes em alambique de cobre. Pureza e suavidade incomparáveis." },
+  { id: 5, name: "Queijo Minas Frescal Premium", cat: "queijo", price: 28.00, emoji: "🧀", desc: "Feito com leite fresco de vacas criadas a pasto. Sabor suave e delicado." },
+];
+let cart = [];
+let currentFilter = "todos";
+let nextId = 10;
+
+function showPage(p) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-links button').forEach(el => el.classList.remove('active'));
+  document.getElementById('page-' + p).classList.add('active');
+  const nb = document.getElementById('nav-' + p);
+  if (nb) nb.classList.add('active');
+  if (p === 'products') renderProducts();
+  if (p === 'cart') renderCart();
+  if (p === 'admin') renderAdmin();
+  window.scrollTo(0, 0);
+}
+
+function filterAndShow(cat) {
+  currentFilter = cat;
+  showPage('products');
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  const btns = document.querySelectorAll('.filter-btn');
+  btns.forEach(b => { if (b.textContent.toLowerCase().includes(cat)) b.classList.add('active'); });
+}
+
+function setFilter(cat, btn) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProducts();
+}
+
+function renderProducts() {
+  const grid = document.getElementById('products-grid');
+  const list = currentFilter === 'todos' ? products : products.filter(p => p.cat === currentFilter);
+  if (list.length === 0) {
+    grid.innerHTML = '<p style="color:var(--text-muted); padding: 2rem 0;">Nenhum produto nesta categoria ainda.</p>';
+    return;
+  }
+  grid.innerHTML = list.map(p => `
+    <div class="product-card">
+      <div class="product-img">${p.emoji}</div>
+      <div class="product-info">
+        <div class="product-cat">${p.cat === 'queijo' ? 'Queijo Artesanal' : 'Cachaça Gourmet'}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-footer">
+          <span class="product-price">R$ ${p.price.toFixed(2)}</span>
+          <button class="add-to-cart" onclick="addToCart(${p.id})">+ Carrinho</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addToCart(id) {
+  const prod = products.find(p => p.id === id);
+  const existing = cart.find(c => c.id === id);
+  if (existing) existing.qty++;
+  else cart.push({ ...prod, qty: 1 });
+  updateCartCount();
+  showToast(prod.emoji + ' ' + prod.name + ' adicionado ao carrinho!');
+}
+
+function updateCartCount() {
+  const total = cart.reduce((s, c) => s + c.qty, 0);
+  document.getElementById('cart-count').textContent = total;
+}
+
+function renderCart() {
+  const el = document.getElementById('cart-content');
+  if (cart.length === 0) {
+    el.innerHTML = `<div class="cart-empty"><div class="big-icon">🛒</div><p>Seu carrinho está vazio.</p><br><button class="btn-primary" onclick="showPage('products')">Ver produtos</button></div>`;
+    return;
+  }
+  const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
+  const frete = 15.00;
+  const total = subtotal + frete;
+  el.innerHTML = cart.map(c => `
+    <div class="cart-item">
+      <div class="cart-item-icon">${c.emoji}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${c.name}</div>
+        <div class="cart-item-price">R$ ${c.price.toFixed(2)} cada</div>
+      </div>
+      <div class="qty-controls">
+        <button class="qty-btn" onclick="changeQty(${c.id}, -1)">−</button>
+        <span>${c.qty}</span>
+        <button class="qty-btn" onclick="changeQty(${c.id}, 1)">+</button>
+      </div>
+      <button class="remove-btn" onclick="removeItem(${c.id})">✕</button>
+    </div>
+  `).join('') + `
+    <div class="cart-summary">
+      <div class="summary-row"><span>Subtotal</span><span>R$ ${subtotal.toFixed(2)}</span></div>
+      <div class="summary-row"><span>Frete estimado</span><span>R$ ${frete.toFixed(2)}</span></div>
+      <div class="summary-row summary-total"><strong>Total</strong><strong>R$ ${total.toFixed(2)}</strong></div>
+      <button class="checkout-btn" onclick="checkout()">Finalizar pedido via WhatsApp</button>
+    </div>
+  `;
+}
+
+function changeQty(id, delta) {
+  const item = cart.find(c => c.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) cart = cart.filter(c => c.id !== id);
+  updateCartCount();
+  renderCart();
+}
+
+function removeItem(id) {
+  cart = cart.filter(c => c.id !== id);
+  updateCartCount();
+  renderCart();
+}
+
+function checkout() {
+  const lines = cart.map(c => `• ${c.qty}x ${c.name} — R$ ${(c.price * c.qty).toFixed(2)}`).join('%0A');
+  const total = cart.reduce((s, c) => s + c.price * c.qty, 0) + 15;
+  const msg = `Olá! Gostaria de fazer um pedido:%0A%0A${lines}%0A%0ATotal: R$ ${total.toFixed(2)}%0A%0AObrigado!`;
+  window.open('https://wa.me/5511999999999?text=' + msg, '_blank');
+}
+
+function addProduct() {
+  const name = document.getElementById('f-name').value.trim();
+  const cat = document.getElementById('f-cat').value;
+  const price = parseFloat(document.getElementById('f-price').value);
+  const emoji = document.getElementById('f-emoji').value || (cat === 'queijo' ? '🧀' : '🥃');
+  const desc = document.getElementById('f-desc').value.trim();
+  if (!name || !price || !desc) { alert('Preencha nome, preço e descrição!'); return; }
+  products.push({ id: nextId++, name, cat, price, emoji, desc });
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-price').value = '';
+  document.getElementById('f-emoji').value = '';
+  document.getElementById('f-desc').value = '';
+  const msg = document.getElementById('success-msg');
+  msg.style.display = 'block';
+  setTimeout(() => msg.style.display = 'none', 3000);
+  renderAdmin();
+}
+
+function renderAdmin() {
+  const el = document.getElementById('admin-list');
+  el.innerHTML = products.map(p => `
+    <div class="admin-product-row">
+      <div class="admin-icon">${p.emoji}</div>
+      <div class="admin-info">
+        <div class="admin-name">${p.name}</div>
+        <div class="admin-cat">${p.cat === 'queijo' ? 'Queijo' : 'Cachaça'}</div>
+      </div>
+      <div class="admin-price">R$ ${p.price.toFixed(2)}</div>
+      <button class="del-btn" onclick="deleteProduct(${p.id})">Remover</button>
+    </div>
+  `).join('');
+}
+
+function deleteProduct(id) {
+  if (!confirm('Remover este produto?')) return;
+  products = products.filter(p => p.id !== id);
+  cart = cart.filter(c => c.id !== id);
+  updateCartCount();
+  renderAdmin();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+renderProducts();
+renderAdmin();
+</script>
+</body>
+</html>
