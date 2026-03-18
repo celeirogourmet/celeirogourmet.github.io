@@ -29,6 +29,10 @@ export default async function handler(req, res) {
     },
     payment_methods: {
       installments: 1,
+      excluded_payment_types: [
+        { id: 'ticket' },
+        { id: 'atm' },
+      ],
     },
     statement_descriptor: 'Celeiro Gourmet',
     binary_mode: true,
