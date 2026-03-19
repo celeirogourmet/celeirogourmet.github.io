@@ -48,14 +48,14 @@ export default async function handler(req, res) {
     payment_methods: {
       installments: 1,
     },
-    statement_descriptor: 'Celeiro Gourmet',
-    binary_mode: true,
     back_urls: {
       success: 'https://www.celeirogourmet.net.br?pagamento=sucesso',
       failure: 'https://www.celeirogourmet.net.br?pagamento=erro',
-      pending: 'https://www.celeirogourmet.net.br?pagamento=pendente',
+      pending: 'https://www.celeirogourmet.net.br?pagamento=sucesso',
     },
-    auto_return: 'approved',
+    auto_return: 'all',
+    statement_descriptor: 'Celeiro Gourmet',
+    binary_mode: false,
   };
 
   try {
