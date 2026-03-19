@@ -76,7 +76,7 @@ export default async function handler(req, res) {
     }
 
     // Salvar pedido no Supabase
-    await sbFetch('/rest/v1/orders', {
+    await sbFetch('/rest/v1/Orders', {
       method: 'POST',
       body: JSON.stringify({
         preference_id: data.id,
